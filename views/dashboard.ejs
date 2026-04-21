@@ -1,0 +1,151 @@
+ <!-- sprint 3. tp 3. Etapa 2.  -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <title>Superhéroes</title>
+
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+ body {
+    font-family: sans-serif;
+    background-color: #f0f0f0; 
+ }
+ .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+ }
+ .hero-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: white;
+ }
+ .hero-actions a, .hero-actions button {
+    padding: 8px 12px;
+    margin-right: 5px;
+    cursor: pointer;
+ }
+ .add-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px;
+    background-color: #33ff00;
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    border: 4px double black;
+    border-radius: 7px;
+ }
+ h1 {
+    color: #333;
+    margin-bottom: 30px;
+ }
+</style>
+</head>
+
+<body>
+
+<a href="/api/heroes/nuevo" class="add-button">Agregar superhéroe</a>
+
+<section class="container" style="text-align: center;">
+    <h1>Superhéroes</h1>
+    <h2>Listado de Superhéroes</h2>
+</section>
+
+<main class="container">
+ <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+
+ <% if (heroes.length > 0) { %>
+ <% heroes.forEach(hero => { %>
+
+    <!-- <article class="hero-card" style="flex: 1 1 calc(50% - 20px);"> -->
+        <article class="hero-card" 
+        style="
+                display: inline-block; 
+                width: auto;
+                max-width: 500px;
+                padding: 20px; 
+                background: #ffe6f2;        
+                border: 4px double #000;    
+                border-radius: 10px;
+                margin: 10px; ">
+
+        <h3><%= hero.nombreSuperheroe %></h3>
+        <p><strong>Nombre real:</strong> <%= hero.nombreReal %></p>
+        <p><strong>Edad:</strong> <%= hero.edad %></p>
+        <p><strong>Planeta de origen:</strong> <%= hero.planetaOrigen %></p>
+        <p><strong>Poderes:</strong> <%= hero.poderes %></p>
+        <p><strong>Debilidades:</strong> <%= hero.debilidad %></p>
+
+        <!--   VER MÁS  - genera conflicto en routes- comentado el endpoint en routes-
+
+        <a href="/api/heroes/<%= hero.id %>">Ver más</a>
+
+        <div class="hero-actions" style="margin-top: 10px;"> -->
+
+            <!-- Sprint 3. tp 3. Etapa 4. Requerimiento 5: BOTÓN EDITAR  -->
+            <a href="/api/heroes/<%= hero.id %>/editar"
+               style="background-color: #007bff; color: white; border: none; 
+                      padding: 8px 12px; cursor: pointer; text-decoration: none; 
+                      border-radius:4px;">
+               Editar
+            </a>
+
+            <!-- Sprint 3. tp 3. Etapa 5. Requerimiento 1: BOTÓN ELIMINAR -->
+            <form id="form-<%= hero.id %>" 
+                  action="/api/heroes/id/<%= hero.id %>?_method=DELETE" 
+                  method="POST" 
+                  style="display: inline;">
+
+                <button type="button"
+                        onclick="confirmarEliminacion('<%= hero.id %>')"
+                        style="background-color: #dc3545; color: white; border: none; 
+                               padding: 8px 12px; cursor: pointer; border-radius:4px;">
+                    Eliminar
+                </button>
+            </form>
+        </div>
+    </article>
+
+ <% }) %>
+ <% } else { %>
+    <p>No hay superhéroes para mostrar.</p>
+ <% } %>
+
+ </div>
+</main>
+
+<script>
+function confirmarEliminacion(heroId) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará permanentemente al superhéroe.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Eliminado',
+                text: 'El superhéroe fue eliminado exitosamente.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                document.getElementById('form-' + heroId).submit();
+            });
+        }
+    });
+}
+</script>
+
+</body>
+</html>
